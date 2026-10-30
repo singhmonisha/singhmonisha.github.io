@@ -10,17 +10,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --fog: #EDEFF5;        /* page */
-    --paper: #F8F9FC;      /* raised surfaces */
-    --ink: #1B1F3B;        /* text */
-    --ink-soft: #565C7E;   /* secondary text */
-    --rule: #D3D7E6;       /* hairlines, guides */
-    --signal: #D63A73;     /* the trace + award only */
-    --signal-wash: rgba(214, 58, 115, 0.12);
+    /* base */
+    --page: #F7F6FB;       /* soft lavender-white */
+    --paper: #FFFFFF;
+    --ink: #2A2D4A;        /* soft indigo, easier on the eyes than black */
+    --ink-soft: #5E6383;
+    --rule: #E3E1EF;
+
+    /* accent */
+    --lav: #6C63C7;        /* line, numbers, focus */
+    --lav-soft: #B8AEF2;
+    --lav-wash: #EEEBFD;
+
+    /* the four engagement levels (pastel + readable text colour) */
+    --mint: #CFEFE2;   --mint-ink: #2C6A55;
+    --sky: #D7E7FA;    --sky-ink: #2D5886;
+    --butter: #FBF0CC; --butter-ink: #745A10;
+    --blush: #F8DCE2;  --blush-ink: #973A53;
 
     --display: "Bricolage Grotesque", system-ui, sans-serif;
     --body: "Literata", Georgia, serif;
-
     --measure: 40rem;
     --wide: 68rem;
   }
@@ -31,7 +40,7 @@
 
   body {
     margin: 0;
-    background: var(--fog);
+    background: var(--page);
     color: var(--ink);
     font-family: var(--body);
     font-size: 1.0625rem;
@@ -39,71 +48,113 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  a { color: inherit; text-decoration-color: var(--signal); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
-  a:hover { color: var(--signal); }
-  :focus-visible { outline: 2.5px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+  a { color: inherit; text-decoration-color: var(--lav-soft); text-decoration-thickness: 2px; text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }
+  a:hover { color: var(--lav); text-decoration-color: var(--lav); }
+  :focus-visible { outline: 2.5px solid var(--lav); outline-offset: 3px; border-radius: 4px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
 
   .wrap { width: min(100% - 2.5rem, var(--wide)); margin-inline: auto; }
 
-  /* ---------- top bar ---------- */
+  /* small pill button used across the page */
+  .chip {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .2rem .75rem;
+    border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--paper);
+    font-family: var(--display); font-size: .88rem; color: var(--ink-soft);
+    text-decoration: none;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .chip:hover { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--ink); }
+  .chip[aria-expanded="true"], .chip[aria-pressed="true"] { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--ink); }
+
+  /* ---------- sticky top bar ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(247, 246, 251, .86);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .top.scrolled { border-bottom-color: var(--rule); }
   .bar {
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    padding-block: 1.25rem;
-    font-family: var(--display);
-    font-size: 0.95rem;
+    padding-block: .9rem;
+    font-family: var(--display); font-size: .95rem;
   }
   .bar .home { font-weight: 650; text-decoration: none; letter-spacing: -0.01em; }
-  .bar nav { display: flex; gap: 1.4rem; flex-wrap: wrap; }
-  .bar nav a { text-decoration: none; color: var(--ink-soft); }
-  .bar nav a:hover { color: var(--ink); }
+  .bar nav { display: flex; gap: .3rem; flex-wrap: wrap; }
+  .bar nav a { text-decoration: none; color: var(--ink-soft); padding: .25rem .7rem; border-radius: 999px; transition: background .2s, color .2s; }
+  .bar nav a:hover { color: var(--ink); background: var(--lav-wash); }
+  .bar nav a[aria-current="true"] { color: var(--ink); background: var(--lav-wash); }
 
   /* ---------- hero ---------- */
-  .hero { padding-top: clamp(2.5rem, 8vw, 6rem); }
+  .hero { padding-top: clamp(2.5rem, 7vw, 5.5rem); }
   .hero h1 {
     margin: 0;
     font-family: var(--display);
-    font-weight: 720;
-    font-stretch: 78%;
+    font-weight: 720; font-stretch: 78%;
     font-variation-settings: "opsz" 96;
     font-size: clamp(3.4rem, 12vw, 9.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.035em;
+    line-height: 0.88; letter-spacing: -0.035em;
   }
-  .hero .lede {
-    max-width: 34rem;
-    margin: 1.6rem 0 0;
-    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
-    line-height: 1.5;
-  }
-  .hero .role { margin: 0.8rem 0 0; color: var(--ink-soft); font-size: 1rem; }
+  .hero .lede { max-width: 34rem; margin: 1.6rem 0 0; font-size: clamp(1.15rem, 2.2vw, 1.4rem); line-height: 1.5; }
+  .hero .role { margin: .8rem 0 0; color: var(--ink-soft); font-size: 1rem; }
 
+  /* ---------- engagement trace ---------- */
   .trace {
-    margin-top: clamp(2.5rem, 6vw, 4rem);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
+    display: grid; grid-template-columns: 9rem minmax(0, 1fr);
+    height: clamp(180px, 24vw, 240px);
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    background: var(--paper);
+    border: 1px solid var(--rule); border-radius: 16px;
+    overflow: hidden;
   }
-  .trace canvas { display: block; width: 100%; height: clamp(150px, 22vw, 220px); }
+  .bands { display: grid; grid-template-rows: repeat(4, 1fr); margin: 0; padding: 0; list-style: none; }
+  .bands li {
+    display: flex; align-items: center;
+    padding: 0 .9rem;
+    font-family: var(--display); font-size: .86rem; font-weight: 500; line-height: 1.2;
+    transition: box-shadow .25s, font-weight .25s;
+  }
+  .bands li.on { font-weight: 700; box-shadow: inset 5px 0 0 currentColor; }
+  .b3 { background: var(--mint);   color: var(--mint-ink); }
+  .b2 { background: var(--sky);    color: var(--sky-ink); }
+  .b1 { background: var(--butter); color: var(--butter-ink); }
+  .b0 { background: var(--blush);  color: var(--blush-ink); }
+
+  .plot { position: relative; cursor: crosshair; }
+  .plot canvas { display: block; width: 100%; height: 100%; }
+  .tip {
+    position: absolute; top: .6rem; transform: translateX(-50%);
+    padding: .2rem .6rem; border-radius: 8px;
+    background: var(--ink); color: #fff;
+    font-family: var(--display); font-size: .8rem; white-space: nowrap;
+    pointer-events: none;
+  }
+
   .trace-caption {
-    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 2rem;
-    padding: 0.8rem 0 0;
-    font-family: var(--display);
-    font-size: 0.92rem;
-    color: var(--ink-soft);
+    display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.5rem;
+    padding-top: .9rem;
+    font-family: var(--display); font-size: .92rem; color: var(--ink-soft);
   }
-  .trace-caption .now { color: var(--ink); font-weight: 600; }
-  .trace-caption .now span { color: var(--signal); }
+  .trace-caption p { margin: 0; }
+  .trace-caption .explain { flex: 1 1 22rem; }
+  .now { color: var(--ink); font-weight: 600; }
+  .pill { display: inline-block; padding: .1rem .65rem; border-radius: 999px; font-weight: 650; transition: background .3s, color .3s; }
+  .pill[data-band="3"] { background: var(--mint);   color: var(--mint-ink); }
+  .pill[data-band="2"] { background: var(--sky);    color: var(--sky-ink); }
+  .pill[data-band="1"] { background: var(--butter); color: var(--butter-ink); }
+  .pill[data-band="0"] { background: var(--blush);  color: var(--blush-ink); }
 
   /* ---------- sections ---------- */
-  section { padding-block: clamp(3.5rem, 9vw, 6.5rem) 0; }
+  section { padding-block: clamp(3.5rem, 9vw, 6.5rem) 0; scroll-margin-top: 4.5rem; }
+  footer { scroll-margin-top: 4.5rem; }
   .split { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 2.5rem; }
   h2 {
     margin: 0;
-    font-family: var(--display);
-    font-weight: 650;
-    font-stretch: 85%;
-    font-size: 1.9rem;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-family: var(--display); font-weight: 650; font-stretch: 85%;
+    font-size: 1.9rem; line-height: 1.1; letter-spacing: -0.02em;
   }
   .prose { max-width: var(--measure); }
   .prose p { margin: 0 0 1.1rem; }
@@ -112,88 +163,134 @@
   .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; gap: 2.5rem; align-items: start; }
   .portrait {
     width: 11rem; aspect-ratio: 4 / 5;
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
+    background: var(--lav-wash);
+    border-radius: 18px;
     display: grid; place-items: center;
-    font-family: var(--display); font-size: 2.4rem; font-weight: 300; color: var(--ink-soft);
+    font-family: var(--display); font-size: 2.4rem; font-weight: 300; color: var(--lav);
     overflow: hidden;
   }
   .portrait img { width: 100%; height: 100%; object-fit: cover; }
-  .links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.3rem; margin-top: 1.4rem; font-family: var(--display); font-size: 0.98rem; }
+  .links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.4rem; }
 
-  /* research: a real sequence, so it is numbered */
-  .arc { list-style: none; margin: 0; padding: 0; counter-reset: arc; max-width: 46rem; }
-  .arc li {
-    counter-increment: arc;
-    display: grid; grid-template-columns: 2.6rem minmax(0, 1fr);
-    padding: 1.4rem 0;
-    border-top: 1px solid var(--rule);
+  /* research stepper: the thesis is a real sequence */
+  .steps { max-width: 48rem; }
+  .step-tabs { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+  .step-tabs::before, .step-tabs .fill {
+    content: ""; position: absolute; top: 1.15rem; left: 12.5%; height: 3px; border-radius: 3px;
   }
-  .arc li:first-child { border-top: 0; padding-top: 0; }
-  .arc li::before {
-    content: counter(arc);
-    font-family: var(--display); font-weight: 300; font-size: 1.6rem; line-height: 1.1;
-    color: var(--signal);
+  .step-tabs::before { right: 12.5%; background: var(--rule); }
+  .step-tabs .fill { width: 0; background: var(--lav-soft); transition: width .35s ease; }
+  .step-tabs button {
+    position: relative; z-index: 1;
+    display: grid; justify-items: center; gap: .5rem;
+    padding: 0 .3rem .6rem;
+    border: 0; background: none;
+    font-family: var(--display); font-size: .95rem; font-weight: 550; line-height: 1.25; text-align: center;
+    color: var(--ink-soft);
+    border-radius: 10px;
   }
-  .arc h3 { margin: 0 0 0.3rem; font-family: var(--display); font-weight: 620; font-size: 1.2rem; letter-spacing: -0.01em; }
-  .arc p { margin: 0; color: var(--ink-soft); }
+  .step-tabs .n {
+    display: grid; place-items: center;
+    width: 2.35rem; height: 2.35rem; border-radius: 50%;
+    background: var(--paper); border: 2px solid var(--rule);
+    font-weight: 600; color: var(--ink-soft);
+    transition: background .25s, border-color .25s, color .25s, transform .25s;
+  }
+  .step-tabs button:hover .n { border-color: var(--lav-soft); }
+  .step-tabs button.done .n { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--lav); }
+  .step-tabs button[aria-selected="true"] { color: var(--ink); }
+  .step-tabs button[aria-selected="true"] .n { background: var(--lav); border-color: var(--lav); color: #fff; transform: scale(1.08); }
+
+  .step-panel {
+    margin-top: 1rem;
+    padding: 1.4rem 1.6rem;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 16px;
+  }
+  .step-panel h3 { margin: 0 0 .4rem; font-family: var(--display); font-weight: 650; font-size: 1.25rem; letter-spacing: -0.01em; }
+  .step-panel p { margin: 0 0 .9rem; }
+  .step-panel .rel { font-family: var(--display); font-size: .9rem; color: var(--ink-soft); margin-bottom: .4rem; }
+  .step-panel ul { margin: 0; padding-left: 1.1rem; }
+  .step-panel li { margin: .2rem 0; }
+  .step-panel .soon { margin: 0; font-family: var(--display); font-size: .92rem; color: var(--ink-soft); }
+  .step-panel:not([hidden]) { animation: panelIn .3s ease; }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
   /* news */
   .news { margin: 0; max-width: 44rem; }
-  .news div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: 0.75rem 0; }
-  .news dt { font-family: var(--display); font-size: 0.95rem; color: var(--ink-soft); padding-top: 0.15rem; }
+  .news div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: .75rem 0; align-items: baseline; }
+  .news dt { justify-self: start; padding: .05rem .6rem; border-radius: 999px; background: var(--lav-wash); font-family: var(--display); font-size: .88rem; color: var(--lav); }
   .news dd { margin: 0; }
 
   /* publications */
-  .pubs { list-style: none; margin: 0; padding: 0; max-width: 46rem; }
-  .pubs li { padding: 1.3rem 0; border-top: 1px solid var(--rule); }
-  .pubs li:first-child { border-top: 0; padding-top: 0; }
+  .pubs { list-style: none; margin: 0 0 0 -1rem; padding: 0; max-width: 48rem; }
+  .pubs li { padding: 1.2rem 1rem; border-radius: 14px; scroll-margin-top: 6rem; }
+  .pubs li + li { border-top: 1px solid var(--rule); }
+  .pubs li.flash { animation: flash 1.8s ease; }
+  @keyframes flash { 0%, 35% { background: var(--lav-wash); } 100% { background: transparent; } }
   .pubs .title { display: block; font-family: var(--display); font-weight: 620; font-size: 1.15rem; line-height: 1.35; letter-spacing: -0.01em; }
-  .pubs .authors { display: block; margin-top: 0.3rem; font-size: 0.97rem; color: var(--ink-soft); }
+  .pubs .authors { display: block; margin-top: .3rem; font-size: .97rem; color: var(--ink-soft); }
   .pubs .authors b { color: var(--ink); font-weight: 600; }
-  .pubs .venue { display: block; font-style: italic; font-size: 0.97rem; }
-  .pubs .actions { display: flex; gap: 1rem; margin-top: 0.45rem; font-family: var(--display); font-size: 0.92rem; }
+  .pubs .venue { display: block; font-style: italic; font-size: .97rem; }
+  .pubs .actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .7rem; }
   .award {
-    display: inline-block; margin-top: 0.55rem;
-    padding: 0.15rem 0.6rem;
-    background: var(--signal-wash); color: #A9235A;
-    border-radius: 999px;
-    font-family: var(--display); font-weight: 600; font-size: 0.88rem;
+    display: inline-block; margin-top: .55rem;
+    padding: .15rem .7rem; border-radius: 999px;
+    background: var(--blush); color: var(--blush-ink);
+    font-family: var(--display); font-weight: 650; font-size: .88rem;
   }
-  .year { font-family: var(--display); font-size: 0.95rem; color: var(--ink-soft); margin: 2rem 0 0.6rem; }
+  .bib { position: relative; margin-top: .7rem; }
+  .bib pre {
+    margin: 0; padding: .9rem 1rem; padding-right: 5.5rem;
+    background: var(--page); border: 1px solid var(--rule); border-radius: 10px;
+    font-size: .8rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .bib .chip { position: absolute; top: .55rem; right: .55rem; }
+  .year { font-family: var(--display); font-size: .95rem; color: var(--ink-soft); margin: 2rem 0 .4rem; }
   .year:first-of-type { margin-top: 0; }
 
   /* footer */
   footer { padding-block: clamp(4rem, 10vw, 7rem) 2.5rem; }
-  .contact { border-top: 1px solid var(--ink); padding-top: 2rem; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 2.5rem; }
-  .contact .email { font-family: var(--display); font-size: clamp(1.4rem, 3.5vw, 2.2rem); font-weight: 560; font-stretch: 85%; letter-spacing: -0.02em; word-break: break-word; }
-  .fine { margin-top: 3rem; font-family: var(--display); font-size: 0.85rem; color: var(--ink-soft); }
+  .contact { border-top: 2px solid var(--lav-soft); padding-top: 2rem; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 2.5rem; }
+  .email-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
+  .contact .email { font-family: var(--display); font-size: clamp(1.25rem, 3.2vw, 2rem); font-weight: 560; font-stretch: 85%; letter-spacing: -0.02em; word-break: break-all; }
+  .fine { margin-top: 3rem; font-family: var(--display); font-size: .85rem; color: var(--ink-soft); }
 
   @media (max-width: 760px) {
     .split, .contact { grid-template-columns: 1fr; gap: 1.2rem; }
     .about-grid { grid-template-columns: 1fr; }
     .portrait { order: -1; width: 8rem; font-size: 1.8rem; }
-    .bar nav { gap: 1rem; }
-    .news div { grid-template-columns: 1fr; gap: 0.1rem; }
+    .news div { grid-template-columns: 1fr; gap: .3rem; }
+    .trace { grid-template-columns: 6.2rem minmax(0, 1fr); }
+    .bands li { font-size: .76rem; padding: 0 .6rem; }
+
+    .step-tabs { grid-template-columns: 1fr; gap: .2rem; }
+    .step-tabs::before, .step-tabs .fill { display: none; }
+    .step-tabs button { grid-template-columns: auto 1fr; justify-items: start; align-items: center; text-align: left; gap: .8rem; padding: .35rem .4rem; }
+    .step-tabs button[aria-selected="true"] { background: var(--lav-wash); }
   }
   @media (max-width: 460px) {
-    .bar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-    .bar nav { gap: 0.9rem; font-size: 0.88rem; }
+    .bar { flex-direction: column; align-items: flex-start; gap: .3rem; }
+    .bar nav { margin-left: -.6rem; font-size: .86rem; gap: 0; flex-wrap: nowrap; max-width: calc(100% + .6rem); overflow-x: auto; scrollbar-width: none; }
+    .bar nav a { padding: .25rem .55rem; white-space: nowrap; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
 <body>
 
-<header class="wrap bar">
-  <a class="home" href="#top">Monisha Singh</a>
-  <nav aria-label="Sections">
-    <a href="#about">About</a>
-    <a href="#research">Research</a>
-    <a href="#news">News</a>
-    <a href="#publications">Publications</a>
-    <a href="#contact">Contact</a>
-  </nav>
+<header class="top" id="topbar">
+  <div class="wrap bar">
+    <a class="home" href="#top">Monisha Singh</a>
+    <nav aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#news">News</a>
+      <a href="#publications">Publications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
 </header>
 
 <main id="top">
@@ -202,12 +299,22 @@
     <p class="lede">I build models that notice whether people are engaged, paying attention, or losing interest, and agents that know when to step in.</p>
     <p class="role">PhD student, Indian Institute of Technology Ropar</p>
 
-    <figure class="trace" style="margin-inline:0">
-      <canvas id="trace" role="img" aria-label="A live line showing an estimate of how engaged you are with this page, based on mouse, scroll and keyboard activity."></canvas>
-    </figure>
+    <div class="trace">
+      <ul class="bands" aria-hidden="true">
+        <li class="b3" data-band="3">Highly engaged</li>
+        <li class="b2" data-band="2">Engaged</li>
+        <li class="b1" data-band="1">Barely engaged</li>
+        <li class="b0" data-band="0">Not engaged</li>
+      </ul>
+      <div class="plot" id="plot">
+        <canvas id="trace" role="img" aria-label="A live line showing an estimate of how engaged you are with this page, based on mouse, scroll and keyboard activity."></canvas>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+    </div>
     <div class="trace-caption">
-      <span class="now">Right now: <span id="level">Engaged</span></span>
-      <span>Your engagement with this page, guessed from how you move, scroll and pause. No camera, just a toy version of what I study.</span>
+      <p class="now">Right now: <span id="level" class="pill" data-band="2">Engaged</span></p>
+      <p class="explain">Your engagement with this page, guessed from how you move, scroll and pause. No camera, just a toy version of what I study. Hover the line to look back in time.</p>
+      <button class="chip" id="pause" type="button" aria-pressed="false">Pause</button>
     </div>
   </div>
 
@@ -217,16 +324,16 @@
       <div class="about-grid">
         <div class="prose">
           <p>I am a PhD student at IIT Ropar, where I started in January 2022. My research is on engagement- and affect-aware machine learning: recognising how engaged and attentive someone is from video, voice and conversation, and using those signals inside interactive systems.</p>
-          <p>I work with Dr. Abhinav Dhall (Monash University) at the LASII Lab, IIIT-Delhi.</p>
+          <p>I work with Dr. Abhinav Dhall (Monash University) at the LASII Lab, IIT-Ropar.</p>
           <div class="links">
             <!-- TODO: replace each # with your real link -->
-            <a href="cv.pdf">CV (PDF)</a>
-            <a href="https://scholar.google.com/citations?user=Uu3OWTEAAAAJ&hl=en">Google Scholar</a>
-            <a href="#">GitHub</a>
-            <a href="#">LinkedIn</a>
+            <a class="chip" href="cv.pdf">CV (PDF)</a>
+            <a class="chip" href="https://scholar.google.com/citations?user=Uu3OWTEAAAAJ&hl=en">Google Scholar</a>
+            <a class="chip" href="#">GitHub</a>
+            <a class="chip" href="#">LinkedIn</a>
           </div>
         </div>
-        <div class="portrait" aria-hidden="true"><img src="photo.jpg" alt="Monisha Singh"></div>
+        <div class="portrait"><img src="photo.jpg" alt="Monisha Singh"></div>
       </div>
     </div>
   </section>
@@ -234,32 +341,44 @@
   <section id="research" class="wrap">
     <div class="split">
       <h2>Research</h2>
-      <ol class="arc">
-        <li>
-          <div>
-            <h3>Predicting engagement</h3>
-            <p>Interpretable multimodal models that estimate engagement from faces, gaze, voice and affect, and show which signals drove the prediction.</p>
-          </div>
-        </li>
-        <li>
-          <div>
-            <h3>Engagement is not attention</h3>
-            <p>Using the DREAMS dataset and video-language models to ask how engagement and attention relate, and where they come apart.</p>
-          </div>
-        </li>
-        <li>
-          <div>
-            <h3>Engagement in conversation</h3>
-            <p>Moving from single people to two-person interaction: predicting engagement as it rises and falls during a real conversation.</p>
-          </div>
-        </li>
-        <li>
-          <div>
-            <h3>Agents that act on it</h3>
-            <p>A conversational tutoring agent that reads engagement and affect while a learner works, and decides when and how to help.</p>
-          </div>
-        </li>
-      </ol>
+      <div class="steps">
+        <div class="step-tabs" role="tablist" aria-label="Research threads, in order">
+          <span class="fill" aria-hidden="true"></span>
+          <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true"><span class="n">1</span>Predicting engagement</button>
+          <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1"><span class="n">2</span>Engagement is not attention</button>
+          <button role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1"><span class="n">3</span>Engagement in conversation</button>
+          <button role="tab" id="tab-4" aria-controls="panel-4" aria-selected="false" tabindex="-1"><span class="n">4</span>Agents that act on it</button>
+        </div>
+
+        <div class="step-panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1">
+          <h3>Predicting engagement</h3>
+          <p>Interpretable multimodal models that estimate engagement from faces, gaze, voice and affect, and show which signals drove the prediction.</p>
+          <p class="rel">Papers</p>
+          <ul>
+            <li><a href="#pub-attention23" data-flash>Do I have your attention (ICMI 2023)</a></li>
+            <li><a href="#pub-engagenetpp" data-flash>EngageNet++ (IEEE Transactions on Affective Computing 2026)</a></li>
+            <li><a href="#pub-moe26" data-flash>Graph-based mixture-of-experts (ICMI 2026, Best Student Paper)</a></li>
+          </ul>
+        </div>
+        <div class="step-panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>
+          <h3>Engagement is not attention</h3>
+          <p>Using the DREAMS dataset and video-language models to ask how engagement and attention relate, and where they come apart.</p>
+          <p class="rel">Papers</p>
+          <ul>
+            <li><a href="#pub-dreams24" data-flash>DREAMS dataset (ICPR 2024)</a></li>
+          </ul>
+        </div>
+        <div class="step-panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>
+          <h3>Engagement in conversation</h3>
+          <p>Moving from single people to two-person interaction: predicting engagement as it rises and falls during a real conversation.</p>
+          <p class="soon">Ongoing work.</p>
+        </div>
+        <div class="step-panel" role="tabpanel" id="panel-4" aria-labelledby="tab-4" hidden>
+          <h3>Agents that act on it</h3>
+          <p>A conversational tutoring agent that reads engagement and affect while a learner works, and decides when and how to help.</p>
+          <p class="soon">Ongoing work.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -279,19 +398,37 @@
       <div>
         <p class="year">2026</p>
         <ul class="pubs">
-          <li>
+          <li id="pub-moe26">
             <span class="title">Interpretable Multimodal Engagement Prediction with Graph-based Mixture-of-Experts</span>
             <span class="authors"><b>Monisha Singh</b>, Abhinav Dhall</span>
             <span class="venue">ACM International Conference on Multimodal Interaction (ICMI), Naples, 2026</span>
             <span class="award">Best Student Paper Award</span>
-            <span class="actions"><a href="#">PDF</a><a href="#">Code</a></span>
+            <span class="actions">
+              <a class="chip" href="#">PDF</a><a class="chip" href="#">Code</a>
+              <button class="chip bib-btn" type="button" aria-expanded="false" aria-controls="bib-moe26">BibTeX</button>
+            </span>
+            <div class="bib" id="bib-moe26" hidden><pre>@inproceedings{singh2026interpretable,
+  title     = {Interpretable Multimodal Engagement Prediction with Graph-based Mixture-of-Experts},
+  author    = {Singh, Monisha and Dhall, Abhinav},
+  booktitle = {Proceedings of the ACM International Conference on Multimodal Interaction (ICMI)},
+  year      = {2026}
+}</pre><button class="chip copy" type="button">Copy</button></div>
           </li>
-          <li>
+          <li id="pub-engagenetpp">
             <span class="title">EngageNet++: Affective Integration and Interpretable Multimodal Engagement Prediction</span>
             <!-- TODO: check the author order -->
             <span class="authors"><b>Monisha Singh</b>, Ximi Hoque, Donghuo Zeng, Yanan Wang, Kazushi Ikeda, Shehroz S. Khan, Abhinav Dhall</span>
             <span class="venue">IEEE Transactions on Affective Computing, 2026</span>
-            <span class="actions"><a href="#">PDF</a><a href="#">Code</a></span>
+            <span class="actions">
+              <a class="chip" href="#">PDF</a><a class="chip" href="#">Code</a>
+              <button class="chip bib-btn" type="button" aria-expanded="false" aria-controls="bib-engagenetpp">BibTeX</button>
+            </span>
+            <div class="bib" id="bib-engagenetpp" hidden><pre>@article{singh2026engagenetpp,
+  title   = {EngageNet++: Affective Integration and Interpretable Multimodal Engagement Prediction},
+  author  = {Singh, Monisha and Hoque, Ximi and Zeng, Donghuo and Wang, Yanan and Ikeda, Kazushi and Khan, Shehroz S. and Dhall, Abhinav},
+  journal = {IEEE Transactions on Affective Computing},
+  year    = {2026}
+}</pre><button class="chip copy" type="button">Copy</button></div>
           </li>
         </ul>
 
@@ -306,17 +443,35 @@
 
         <p class="year">Earlier</p>
         <ul class="pubs">
-          <li>
+          <li id="pub-dreams24">
             <span class="title">DREAMS: Diverse Reactions of Engagement and Attention Mind States dataset</span>
             <span class="authors"><b>Monisha Singh</b>, Gulshan Sharma, Ximi Hoque, Abhinav Dhall</span>
             <span class="venue">International Conference on Pattern Recognition (ICPR), 2024</span>
-            <span class="actions"><a href="#">PDF</a></span>
+            <span class="actions">
+              <a class="chip" href="#">PDF</a>
+              <button class="chip bib-btn" type="button" aria-expanded="false" aria-controls="bib-dreams24">BibTeX</button>
+            </span>
+            <div class="bib" id="bib-dreams24" hidden><pre>@inproceedings{singh2024dreams,
+  title     = {DREAMS: Diverse Reactions of Engagement and Attention Mind States dataset},
+  author    = {Singh, Monisha and Sharma, Gulshan and Hoque, Ximi and Dhall, Abhinav},
+  booktitle = {International Conference on Pattern Recognition (ICPR)},
+  year      = {2024}
+}</pre><button class="chip copy" type="button">Copy</button></div>
           </li>
-          <li>
+          <li id="pub-attention23">
             <span class="title">Do I have your attention: A large scale engagement prediction dataset and baselines</span>
             <span class="authors"><b>Monisha Singh</b>, Ximi Hoque, Donghuo Zeng, Yanan Wang, Kazushi Ikeda, Abhinav Dhall</span>
             <span class="venue">ACM International Conference on Multimodal Interaction (ICMI), Paris, 2023</span>
-            <span class="actions"><a href="#">PDF</a></span>
+            <span class="actions">
+              <a class="chip" href="#">PDF</a>
+              <button class="chip bib-btn" type="button" aria-expanded="false" aria-controls="bib-attention23">BibTeX</button>
+            </span>
+            <div class="bib" id="bib-attention23" hidden><pre>@inproceedings{singh2023attention,
+  title     = {Do I have your attention: A large scale engagement prediction dataset and baselines},
+  author    = {Singh, Monisha and Hoque, Ximi and Zeng, Donghuo and Wang, Yanan and Ikeda, Kazushi and Dhall, Abhinav},
+  booktitle = {Proceedings of the ACM International Conference on Multimodal Interaction (ICMI)},
+  year      = {2023}
+}</pre><button class="chip copy" type="button">Copy</button></div>
           </li>
         </ul>
       </div>
@@ -328,8 +483,10 @@
   <div class="contact">
     <h2>Contact</h2>
     <div>
-      <!-- TODO: put your academic email here -->
-      <a class="email" href="mailto:you@iitrpr.ac.in">monisha.21csz0023@iitrpr.ac.in</a>
+      <div class="email-row">
+        <a class="email" id="email" href="mailto:monisha.21csz0023@iitrpr.ac.in">monisha.21csz0023@iitrpr.ac.in</a>
+        <button class="chip copy" type="button" data-copy="monisha.21csz0023@iitrpr.ac.in">Copy email</button>
+      </div>
       <p class="prose" style="margin-top:1rem">I am happy to talk about engagement, affective computing, multimodal interaction, or collaborations.</p>
     </div>
   </div>
@@ -337,54 +494,53 @@
 </footer>
 
 <script>
+/* ===================== engagement trace ===================== */
 (function () {
   const canvas = document.getElementById('trace');
+  const plot = document.getElementById('plot');
+  const tip = document.getElementById('tip');
   const levelEl = document.getElementById('level');
+  const pauseBtn = document.getElementById('pause');
+  const bandEls = [...document.querySelectorAll('.bands li')];
   const ctx = canvas.getContext('2d');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const LEVELS = [
-    { min: 0.75, name: 'Highly engaged' },
-    { min: 0.50, name: 'Engaged' },
-    { min: 0.25, name: 'Barely engaged' },
-    { min: 0.00, name: 'Not engaged' }
-  ];
-  const BAND_LABELS = ['Highly Engaged', 'Engaged', 'Barely Engaged', 'Not Engaged'];
+  const NAMES = ['Not engaged', 'Barely engaged', 'Engaged', 'Highly engaged'];
   const css = getComputedStyle(document.documentElement);
-  const SIGNAL = css.getPropertyValue('--signal').trim();
-  const RULE = css.getPropertyValue('--rule').trim();
-  const SOFT = css.getPropertyValue('--ink-soft').trim();
+  const v = n => css.getPropertyValue(n).trim();
+  const BAND_FILL = [v('--blush'), v('--butter'), v('--sky'), v('--mint')];  // index = band
+  const LINE = v('--lav');
+  const INK = v('--ink');
 
-  let W = 0, H = 0, dpr = 1;
-  let N = 240;
-  let energy = 0.55, value = 0.55;
+  const STEP = 0.1;            // one stored sample every 0.1 s
+  let W = 0, H = 0, N = 200, stepX = 1;
+  let energy = 0.55, value = 0.55, acc = 0;
   let samples = [];
-  let visible = true, last = performance.now(), lastX = null, lastY = null;
+  let hoverX = null;
+  let visible = true, paused = false, looping = false, last = performance.now(), lastX = null, lastY = null;
+
+  const bandOf = val => Math.min(3, Math.floor(val * 4));
+  const y = val => (1 - val) * H;
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const r = canvas.getBoundingClientRect();
     W = r.width; H = r.height;
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    N = Math.max(120, Math.round(W / 3));
-    // start with a believable past instead of a flat line
-    while (samples.length < N) {
+    N = Math.max(100, Math.round(W / 4));
+    stepX = W / (N - 1);
+    while (samples.length < N) {          // a believable past instead of a flat line
       const k = samples.length;
-      samples.unshift(0.5 + 0.12 * Math.sin(k * 0.045) + 0.05 * Math.sin(k * 0.13));
+      samples.unshift(0.55 + 0.14 * Math.sin(k * 0.06) + 0.06 * Math.sin(k * 0.17));
     }
     while (samples.length > N) samples.shift();
-    if (reduce) drawStatic(); else draw();
+    draw();
   }
 
-  function bump(a) { energy = Math.min(1, energy + a); }
-
+  function bump(a) { if (!paused) energy = Math.min(1, energy + a); }
   window.addEventListener('pointermove', e => {
-    if (lastX !== null) {
-      const d = Math.hypot(e.clientX - lastX, e.clientY - lastY);
-      bump(Math.min(d * 0.0007, 0.05));
-    }
+    if (lastX !== null) bump(Math.min(Math.hypot(e.clientX - lastX, e.clientY - lastY) * 0.0007, 0.05));
     lastX = e.clientX; lastY = e.clientY;
   }, { passive: true });
   window.addEventListener('scroll', () => bump(0.02), { passive: true });
@@ -392,93 +548,167 @@
   window.addEventListener('pointerdown', () => bump(0.08));
   window.addEventListener('touchmove', () => bump(0.02), { passive: true });
 
-  function y(v) { const pad = 14; return pad + (1 - v) * (H - pad * 2); }
-
-  function guides() {
-    ctx.save();
-    ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.setLineDash([2, 5]);
-    [0.75, 0.5, 0.25].forEach(t => {
-      ctx.beginPath(); ctx.moveTo(0, Math.round(y(t)) + 0.5); ctx.lineTo(W, Math.round(y(t)) + 0.5); ctx.stroke();
-    });
-    ctx.setLineDash([]);
-    ctx.fillStyle = SOFT;
-    ctx.font = '12px "Bricolage Grotesque", system-ui, sans-serif';
-    ctx.textBaseline = 'middle';
-    [0.875, 0.625, 0.375, 0.125].forEach((c, i) => ctx.fillText(BAND_LABELS[i], 0, y(c)));
-    ctx.restore();
-  }
-
-  function line(pts) {
-    const left = 64, step = (W - left - 10) / (pts.length - 1);
-    // fill
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, 'rgba(214,58,115,0.16)');
-    g.addColorStop(1, 'rgba(214,58,115,0)');
-    ctx.beginPath();
-    pts.forEach((v, i) => { const X = left + i * step; i ? ctx.lineTo(X, y(v)) : ctx.moveTo(X, y(v)); });
-    ctx.lineTo(left + (pts.length - 1) * step, H); ctx.lineTo(left, H); ctx.closePath();
-    ctx.fillStyle = g; ctx.fill();
-    // stroke
-    ctx.beginPath();
-    pts.forEach((v, i) => { const X = left + i * step; i ? ctx.lineTo(X, y(v)) : ctx.moveTo(X, y(v)); });
-    ctx.strokeStyle = SIGNAL; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.stroke();
-    // head
-    const hx = left + (pts.length - 1) * step, hy = y(pts[pts.length - 1]);
-    ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI * 2); ctx.fillStyle = SIGNAL; ctx.fill();
-    ctx.beginPath(); ctx.arc(hx, hy, 10, 0, Math.PI * 2); ctx.fillStyle = 'rgba(214,58,115,0.18)'; ctx.fill();
-  }
+  // x position of history sample i (newest stored sample sits just left of the live point)
+  const xOf = i => W - (N - 1 - i + acc / STEP) * stepX;
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-    guides();
-    line(samples);
-  }
 
-  function drawStatic() {
-    // a gentle fixed curve for people who prefer no motion
-    const pts = [];
-    for (let i = 0; i < N; i++) {
-      const t = i / (N - 1);
-      pts.push(0.5 + 0.22 * Math.sin(t * 7.2) * (0.6 + 0.4 * Math.cos(t * 2.1)));
+    // pastel bands, matching the labels on the left
+    for (let b = 0; b < 4; b++) {
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle = BAND_FILL[b];
+      ctx.fillRect(0, y((b + 1) / 4), W, H / 4);
     }
-    ctx.clearRect(0, 0, W, H);
-    guides(); line(pts);
-    levelEl.textContent = 'Engaged';
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(42,45,74,0.07)'; ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75].forEach(t => { ctx.beginPath(); ctx.moveTo(0, Math.round(y(t)) + .5); ctx.lineTo(W, Math.round(y(t)) + .5); ctx.stroke(); });
+
+    // the line
+    ctx.beginPath();
+    samples.forEach((s, i) => { const X = xOf(i); i ? ctx.lineTo(X, y(s)) : ctx.moveTo(X, y(s)); });
+    ctx.lineTo(W, y(value));
+    ctx.strokeStyle = LINE; ctx.lineWidth = 2.75; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+
+    // live head
+    ctx.beginPath(); ctx.arc(W - 7, y(value), 11, 0, Math.PI * 2); ctx.fillStyle = 'rgba(108,99,199,0.18)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(W - 7, y(value), 5.5, 0, Math.PI * 2); ctx.fillStyle = LINE; ctx.fill();
+
+    // hover read-out
+    if (hoverX !== null) {
+      const k = Math.max(0, Math.round((W - hoverX) / stepX - acc / STEP));
+      const i = Math.max(0, N - 1 - k);
+      const val = k === 0 ? value : samples[i];
+      const X = k === 0 ? W - 7 : xOf(i);
+      ctx.strokeStyle = 'rgba(42,45,74,0.35)'; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(X, 0); ctx.lineTo(X, H); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(X, y(val), 6, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.lineWidth = 2.5; ctx.strokeStyle = INK; ctx.stroke();
+      const secs = reduce ? null : (k * STEP + acc).toFixed(1);
+      tip.hidden = false;
+      tip.textContent = (secs === null || k === 0 ? 'Now' : secs + ' s ago') + ': ' + NAMES[bandOf(val)];
+      tip.style.left = Math.min(Math.max(X, 70), W - 70) + 'px';
+    } else {
+      tip.hidden = true;
+    }
   }
 
-  function setLevel(v) {
-    const name = LEVELS.find(l => v >= l.min).name;
-    if (levelEl.textContent !== name) levelEl.textContent = name;
+  function setLevel(val) {
+    const b = bandOf(val);
+    if (levelEl.dataset.band !== String(b)) {
+      levelEl.dataset.band = b;
+      levelEl.textContent = NAMES[b];
+      bandEls.forEach(el => el.classList.toggle('on', el.dataset.band === String(b)));
+    }
   }
 
   function tick(now) {
+    if (!visible || paused) { looping = false; return; }
     const dt = Math.min((now - last) / 1000, 0.1); last = now;
-    energy = Math.max(0.04, energy - dt * 0.055);               // slow decay when idle
-    const wobble = (Math.random() - 0.5) * 0.012;
-    value += (energy - value) * Math.min(1, dt * 2.2) + wobble;
-    value = Math.min(0.98, Math.max(0.03, value));
-    samples.push(value); if (samples.length > N) samples.shift();
+    energy = Math.max(0.04, energy - dt * 0.05);          // slow decay when idle
+    value += (energy - value) * Math.min(1, dt * 2.2) + (Math.random() - 0.5) * 0.008;
+    value = Math.min(0.97, Math.max(0.03, value));
+    acc += dt;
+    while (acc >= STEP) { acc -= STEP; samples.push(value); if (samples.length > N) samples.shift(); }
     setLevel(value);
     draw();
-    if (visible) requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
   }
+  function start() { if (!looping && visible && !paused) { looping = true; last = performance.now(); requestAnimationFrame(tick); } }
+
+  plot.addEventListener('pointermove', e => { hoverX = e.clientX - plot.getBoundingClientRect().left; if (paused || reduce) draw(); });
+  plot.addEventListener('pointerleave', () => { hoverX = null; draw(); });
+
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+    pauseBtn.setAttribute('aria-pressed', paused);
+    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+    start();
+  });
 
   resize();
   window.addEventListener('resize', resize);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => reduce ? drawStatic() : draw());
+  setLevel(value);
 
-  if (!reduce) {
-    const io = new IntersectionObserver(([e]) => {
-      const was = visible; visible = e.isIntersecting && !document.hidden;
-      if (visible && !was) { last = performance.now(); requestAnimationFrame(tick); }
-    });
-    io.observe(canvas);
-    document.addEventListener('visibilitychange', () => {
-      const was = visible; visible = !document.hidden;
-      if (visible && !was) { last = performance.now(); requestAnimationFrame(tick); }
-    });
-    requestAnimationFrame(tick);
+  if (reduce) {
+    // no motion: show a fixed example curve that can still be inspected by hovering
+    samples = samples.map((_, i) => { const t = i / (N - 1); return 0.55 + 0.25 * Math.sin(t * 7.2) * (0.6 + 0.4 * Math.cos(t * 2.1)); });
+    value = samples[N - 1]; setLevel(value); draw();
+    pauseBtn.hidden = true;
+  } else {
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting && !document.hidden; start(); }).observe(canvas);
+    document.addEventListener('visibilitychange', () => { visible = !document.hidden; start(); });
+    start();
   }
+})();
+
+/* ===================== research stepper ===================== */
+(function () {
+  const tabs = [...document.querySelectorAll('.step-tabs [role="tab"]')];
+  const fill = document.querySelector('.step-tabs .fill');
+  function select(i, focus) {
+    tabs.forEach((t, j) => {
+      const on = j === i;
+      t.setAttribute('aria-selected', on);
+      t.tabIndex = on ? 0 : -1;
+      t.classList.toggle('done', j < i);
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    fill.style.width = (75 * i / (tabs.length - 1)) + '%';
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('keydown', e => {
+      const k = e.key;
+      if (k === 'ArrowRight' || k === 'ArrowDown') { e.preventDefault(); select((i + 1) % tabs.length, true); }
+      if (k === 'ArrowLeft' || k === 'ArrowUp') { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length, true); }
+      if (k === 'Home') { e.preventDefault(); select(0, true); }
+      if (k === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
+    });
+  });
+  select(0);
+
+  // paper links inside the stepper: jump to the paper and highlight it briefly
+  document.querySelectorAll('a[data-flash]').forEach(a => a.addEventListener('click', () => {
+    const li = document.querySelector(a.getAttribute('href'));
+    if (!li) return;
+    li.classList.remove('flash'); void li.offsetWidth; li.classList.add('flash');
+  }));
+})();
+
+/* ===================== BibTeX + copy buttons ===================== */
+(function () {
+  document.querySelectorAll('.bib-btn').forEach(btn => btn.addEventListener('click', () => {
+    const box = document.getElementById(btn.getAttribute('aria-controls'));
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', open);
+    box.hidden = !open;
+  }));
+  document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy || btn.parentElement.querySelector('pre').textContent;
+    const label = btn.textContent;
+    try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; }
+    catch (e) { btn.textContent = 'Copy failed, select the text instead'; }
+    setTimeout(() => { btn.textContent = label; }, 1600);
+  }));
+})();
+
+/* ===================== sticky bar + current section ===================== */
+(function () {
+  const bar = document.getElementById('topbar');
+  const onScroll = () => bar.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const links = [...document.querySelectorAll('.bar nav a')];
+  const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  targets.forEach(t => t && io.observe(t));
 })();
 </script>
 </body>
