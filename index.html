@@ -11,22 +11,22 @@
 <style>
   :root {
     /* base */
-    --page: #F7F6FB;       /* soft lavender-white */
+    --page: #FAFAFA;
     --paper: #FFFFFF;
-    --ink: #2A2D4A;        /* soft indigo, easier on the eyes than black */
-    --ink-soft: #5E6383;
-    --rule: #E3E1EF;
+    --ink: #161616;        /* near-black text */
+    --ink-soft: #5C5C5C;   /* secondary text */
+    --rule: #E3E3E3;       /* hairlines */
 
-    /* accent */
-    --lav: #6C63C7;        /* line, numbers, focus */
-    --lav-soft: #B8AEF2;
-    --lav-wash: #EEEBFD;
+    /* accent: black, with two greys */
+    --accent: #161616;     /* line, numbers, focus */
+    --accent-soft: #BDBDBD;
+    --wash: #F0F0F0;       /* hover / selected background */
 
-    /* the four engagement levels (pastel + readable text colour) */
-    --mint: #CFEFE2;   --mint-ink: #2C6A55;
-    --sky: #D7E7FA;    --sky-ink: #2D5886;
-    --butter: #FBF0CC; --butter-ink: #745A10;
-    --blush: #F8DCE2;  --blush-ink: #973A53;
+    /* the four engagement levels: lighter grey = less engaged */
+    --g3: #D6D6D6;   /* highly engaged */
+    --g2: #E3E3E3;   /* engaged */
+    --g1: #EDEDED;   /* barely engaged */
+    --g0: #F6F6F6;   /* not engaged */
 
     --display: "Bricolage Grotesque", system-ui, sans-serif;
     --body: "Literata", Georgia, serif;
@@ -40,7 +40,9 @@
 
   body {
     margin: 0;
-    background: var(--page);
+    background:
+      radial-gradient(1100px 520px at 85% -8%, #ECECEC 0%, rgba(236,236,236,0) 70%),
+      var(--page);
     color: var(--ink);
     font-family: var(--body);
     font-size: 1.0625rem;
@@ -48,9 +50,9 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  a { color: inherit; text-decoration-color: var(--lav-soft); text-decoration-thickness: 2px; text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }
-  a:hover { color: var(--lav); text-decoration-color: var(--lav); }
-  :focus-visible { outline: 2.5px solid var(--lav); outline-offset: 3px; border-radius: 4px; }
+  a { color: inherit; text-decoration-color: var(--accent-soft); text-decoration-thickness: 2px; text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }
+  a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+  :focus-visible { outline: 2.5px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
   button { font: inherit; color: inherit; cursor: pointer; }
 
   .wrap { width: min(100% - 2.5rem, var(--wide)); margin-inline: auto; }
@@ -65,13 +67,13 @@
     text-decoration: none;
     transition: background .15s, color .15s, border-color .15s;
   }
-  .chip:hover { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--ink); }
-  .chip[aria-expanded="true"], .chip[aria-pressed="true"] { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--ink); }
+  .chip:hover { background: var(--wash); border-color: var(--accent-soft); color: var(--ink); }
+  .chip[aria-expanded="true"], .chip[aria-pressed="true"] { background: var(--wash); border-color: var(--accent-soft); color: var(--ink); }
 
   /* ---------- sticky top bar ---------- */
   .top {
     position: sticky; top: 0; z-index: 20;
-    background: rgba(247, 246, 251, .86);
+    background: rgba(250, 250, 250, .86);
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     border-bottom: 1px solid transparent;
     transition: border-color .2s;
@@ -85,11 +87,19 @@
   .bar .home { font-weight: 650; text-decoration: none; letter-spacing: -0.01em; }
   .bar nav { display: flex; gap: .3rem; flex-wrap: wrap; }
   .bar nav a { text-decoration: none; color: var(--ink-soft); padding: .25rem .7rem; border-radius: 999px; transition: background .2s, color .2s; }
-  .bar nav a:hover { color: var(--ink); background: var(--lav-wash); }
-  .bar nav a[aria-current="true"] { color: var(--ink); background: var(--lav-wash); }
+  .bar nav a:hover { color: var(--ink); background: var(--wash); }
+  .bar nav a[aria-current="true"] { color: var(--ink); background: var(--wash); }
 
   /* ---------- hero ---------- */
-  .hero { padding-top: clamp(2.5rem, 7vw, 5.5rem); }
+  .hero-zone { position: relative; }
+  .hero-zone::before {
+    content: ""; position: absolute; inset: 0 0 35% 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(circle, #C4C4C4 1px, transparent 1.4px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 60% 85% at 78% 25%, #000 0%, transparent 72%);
+            mask-image: radial-gradient(ellipse 60% 85% at 78% 25%, #000 0%, transparent 72%);
+  }
+  .hero { position: relative; z-index: 1; padding-top: clamp(2.5rem, 7vw, 5.5rem); }
   .hero h1 {
     margin: 0;
     font-family: var(--display);
@@ -97,34 +107,39 @@
     font-variation-settings: "opsz" 96;
     font-size: clamp(3.4rem, 12vw, 9.5rem);
     line-height: 0.88; letter-spacing: -0.035em;
+    padding-bottom: .2em; margin-bottom: -.2em;   /* room for the "g" so the gradient reaches it */
+    background: linear-gradient(175deg, #0E0E0E 25%, #4A4A4A 70%, #8A8A8A 110%);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
   }
   .hero .lede { max-width: 34rem; margin: 1.6rem 0 0; font-size: clamp(1.15rem, 2.2vw, 1.4rem); line-height: 1.5; }
   .hero .role { margin: .8rem 0 0; color: var(--ink-soft); font-size: 1rem; }
 
   /* ---------- engagement trace ---------- */
   .trace {
-    display: grid; grid-template-columns: 9rem minmax(0, 1fr);
+    display: grid; grid-template-columns: 9rem minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
     height: clamp(180px, 24vw, 240px);
     margin-top: clamp(2.5rem, 6vw, 3.5rem);
     background: var(--paper);
     border: 1px solid var(--rule); border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 1px 0 #fff inset, 0 18px 40px -28px rgba(0,0,0,.35);
   }
-  .bands { display: grid; grid-template-rows: repeat(4, 1fr); margin: 0; padding: 0; list-style: none; }
+  .bands { display: grid; grid-template-rows: repeat(4, minmax(0, 1fr)); min-height: 0; margin: 0; padding: 0; list-style: none; }
   .bands li {
     display: flex; align-items: center;
     padding: 0 .9rem;
     font-family: var(--display); font-size: .86rem; font-weight: 500; line-height: 1.2;
     transition: box-shadow .25s, font-weight .25s;
   }
-  .bands li.on { font-weight: 700; box-shadow: inset 5px 0 0 currentColor; }
-  .b3 { background: var(--mint);   color: var(--mint-ink); }
-  .b2 { background: var(--sky);    color: var(--sky-ink); }
-  .b1 { background: var(--butter); color: var(--butter-ink); }
-  .b0 { background: var(--blush);  color: var(--blush-ink); }
+  .bands li.on { font-weight: 650; color: #fff; background: linear-gradient(90deg, #161616, #454545); }
+  .b3 { background: var(--g3); color: var(--ink); }
+  .b2 { background: var(--g2); color: var(--ink); }
+  .b1 { background: var(--g1); color: var(--ink-soft); }
+  .b0 { background: var(--g0); color: var(--ink-soft); }
 
-  .plot { position: relative; cursor: crosshair; }
-  .plot canvas { display: block; width: 100%; height: 100%; }
+  .plot { position: relative; min-height: 0; cursor: crosshair; }
+  .plot canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
   .tip {
     position: absolute; top: .6rem; transform: translateX(-50%);
     padding: .2rem .6rem; border-radius: 8px;
@@ -142,10 +157,10 @@
   .trace-caption .explain { flex: 1 1 22rem; }
   .now { color: var(--ink); font-weight: 600; }
   .pill { display: inline-block; padding: .1rem .65rem; border-radius: 999px; font-weight: 650; transition: background .3s, color .3s; }
-  .pill[data-band="3"] { background: var(--mint);   color: var(--mint-ink); }
-  .pill[data-band="2"] { background: var(--sky);    color: var(--sky-ink); }
-  .pill[data-band="1"] { background: var(--butter); color: var(--butter-ink); }
-  .pill[data-band="0"] { background: var(--blush);  color: var(--blush-ink); }
+  .pill[data-band="3"] { background: linear-gradient(90deg, #161616, #454545); color: #fff; }
+  .pill[data-band="2"] { background: #5C5C5C; color: #fff; }
+  .pill[data-band="1"] { background: var(--g3); color: var(--ink); }
+  .pill[data-band="0"] { background: var(--g1); color: var(--ink-soft); }
 
   /* ---------- sections ---------- */
   section { padding-block: clamp(3.5rem, 9vw, 6.5rem) 0; scroll-margin-top: 4.5rem; }
@@ -163,10 +178,10 @@
   .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; gap: 2.5rem; align-items: start; }
   .portrait {
     width: 11rem; aspect-ratio: 4 / 5;
-    background: var(--lav-wash);
+    background: linear-gradient(160deg, #EFEFEF, #DADADA);
     border-radius: 18px;
     display: grid; place-items: center;
-    font-family: var(--display); font-size: 2.4rem; font-weight: 300; color: var(--lav);
+    font-family: var(--display); font-size: 2.4rem; font-weight: 300; color: var(--ink-soft);
     overflow: hidden;
   }
   .portrait img { width: 100%; height: 100%; object-fit: cover; }
@@ -179,7 +194,7 @@
     content: ""; position: absolute; top: 1.15rem; left: 12.5%; height: 3px; border-radius: 3px;
   }
   .step-tabs::before { right: 12.5%; background: var(--rule); }
-  .step-tabs .fill { width: 0; background: var(--lav-soft); transition: width .35s ease; }
+  .step-tabs .fill { width: 0; background: linear-gradient(90deg, #8A8A8A, #161616); transition: width .35s ease; }
   .step-tabs button {
     position: relative; z-index: 1;
     display: grid; justify-items: center; gap: .5rem;
@@ -196,15 +211,16 @@
     font-weight: 600; color: var(--ink-soft);
     transition: background .25s, border-color .25s, color .25s, transform .25s;
   }
-  .step-tabs button:hover .n { border-color: var(--lav-soft); }
-  .step-tabs button.done .n { background: var(--lav-wash); border-color: var(--lav-soft); color: var(--lav); }
+  .step-tabs button:hover .n { border-color: var(--accent-soft); }
+  .step-tabs button.done .n { background: var(--wash); border-color: var(--accent-soft); color: var(--ink); }
   .step-tabs button[aria-selected="true"] { color: var(--ink); }
-  .step-tabs button[aria-selected="true"] .n { background: var(--lav); border-color: var(--lav); color: #fff; transform: scale(1.08); }
+  .step-tabs button[aria-selected="true"] .n { background: linear-gradient(145deg, #4A4A4A, #0E0E0E); border-color: #161616; color: #fff; transform: scale(1.08); box-shadow: 0 6px 14px -6px rgba(0,0,0,.5); }
 
   .step-panel {
     margin-top: 1rem;
     padding: 1.4rem 1.6rem;
-    background: var(--paper); border: 1px solid var(--rule); border-radius: 16px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F6F6F6 100%);
+    border: 1px solid var(--rule); border-radius: 16px;
   }
   .step-panel h3 { margin: 0 0 .4rem; font-family: var(--display); font-weight: 650; font-size: 1.25rem; letter-spacing: -0.01em; }
   .step-panel p { margin: 0 0 .9rem; }
@@ -218,7 +234,7 @@
   /* news */
   .news { margin: 0; max-width: 44rem; }
   .news div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: .75rem 0; align-items: baseline; }
-  .news dt { justify-self: start; padding: .05rem .6rem; border-radius: 999px; background: var(--lav-wash); font-family: var(--display); font-size: .88rem; color: var(--lav); }
+  .news dt { justify-self: start; padding: .05rem .6rem; border-radius: 999px; background: var(--wash); font-family: var(--display); font-size: .88rem; color: var(--ink); }
   .news dd { margin: 0; }
 
   /* publications */
@@ -226,7 +242,7 @@
   .pubs li { padding: 1.2rem 1rem; border-radius: 14px; scroll-margin-top: 6rem; }
   .pubs li + li { border-top: 1px solid var(--rule); }
   .pubs li.flash { animation: flash 1.8s ease; }
-  @keyframes flash { 0%, 35% { background: var(--lav-wash); } 100% { background: transparent; } }
+  @keyframes flash { 0%, 35% { background: var(--wash); } 100% { background: transparent; } }
   .pubs .title { display: block; font-family: var(--display); font-weight: 620; font-size: 1.15rem; line-height: 1.35; letter-spacing: -0.01em; }
   .pubs .authors { display: block; margin-top: .3rem; font-size: .97rem; color: var(--ink-soft); }
   .pubs .authors b { color: var(--ink); font-weight: 600; }
@@ -235,7 +251,7 @@
   .award {
     display: inline-block; margin-top: .55rem;
     padding: .15rem .7rem; border-radius: 999px;
-    background: var(--blush); color: var(--blush-ink);
+    background: linear-gradient(90deg, #161616, #4A4A4A); color: #fff;
     font-family: var(--display); font-weight: 650; font-size: .88rem;
   }
   .bib { position: relative; margin-top: .7rem; }
@@ -250,13 +266,37 @@
 
   /* footer */
   footer { padding-block: clamp(4rem, 10vw, 7rem) 2.5rem; }
-  .contact { border-top: 2px solid var(--lav-soft); padding-top: 2rem; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 2.5rem; }
+  .contact {
+    position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 2.5rem;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #121212 0%, #262626 55%, #3A3A3A 100%);
+    color: #F2F2F2;
+  }
+  .contact::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 90% at 100% 0%, #000 0%, transparent 75%);
+            mask-image: radial-gradient(ellipse 70% 90% at 100% 0%, #000 0%, transparent 75%);
+  }
+  .contact > * { position: relative; }
+  .contact p { color: #CFCFCF; }
+  .contact a { color: #fff; text-decoration-color: rgba(255,255,255,.35); }
+  .contact a:hover { color: #fff; text-decoration-color: #fff; }
+  .contact :focus-visible { outline-color: #fff; }
+  .contact .chip { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.22); color: #EDEDED; }
+  .contact .chip:hover { background: rgba(255,255,255,.16); color: #fff; }
   .email-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
   .contact .email { font-family: var(--display); font-size: clamp(1.25rem, 3.2vw, 2rem); font-weight: 560; font-stretch: 85%; letter-spacing: -0.02em; word-break: break-all; }
   .fine { margin-top: 3rem; font-family: var(--display); font-size: .85rem; color: var(--ink-soft); }
 
   @media (max-width: 760px) {
     .split, .contact { grid-template-columns: 1fr; gap: 1.2rem; }
+    .contact .email { font-size: 1.08rem; }
     .about-grid { grid-template-columns: 1fr; }
     .portrait { order: -1; width: 8rem; font-size: 1.8rem; }
     .news div { grid-template-columns: 1fr; gap: .3rem; }
@@ -266,7 +306,7 @@
     .step-tabs { grid-template-columns: 1fr; gap: .2rem; }
     .step-tabs::before, .step-tabs .fill { display: none; }
     .step-tabs button { grid-template-columns: auto 1fr; justify-items: start; align-items: center; text-align: left; gap: .8rem; padding: .35rem .4rem; }
-    .step-tabs button[aria-selected="true"] { background: var(--lav-wash); }
+    .step-tabs button[aria-selected="true"] { background: var(--wash); }
   }
   @media (max-width: 460px) {
     .bar { flex-direction: column; align-items: flex-start; gap: .3rem; }
@@ -294,6 +334,7 @@
 </header>
 
 <main id="top">
+  <div class="hero-zone">
   <div class="wrap hero">
     <h1>Monisha<br>Singh</h1>
     <p class="lede">I build models that notice whether people are engaged, paying attention, or losing interest, and agents that know when to step in.</p>
@@ -316,6 +357,7 @@
       <p class="explain">Your engagement with this page, guessed from how you move, scroll and pause. No camera, just a toy version of what I study. Hover the line to look back in time.</p>
       <button class="chip" id="pause" type="button" aria-pressed="false">Pause</button>
     </div>
+  </div>
   </div>
 
   <section id="about" class="wrap">
@@ -371,7 +413,10 @@
         <div class="step-panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>
           <h3>Engagement in conversation</h3>
           <p>Moving from single people to two-person interaction: predicting engagement as it rises and falls during a real conversation.</p>
-          <p class="soon">Ongoing work.</p>
+          <p class="rel">Papers</p>
+          <ul>
+            <li><a href="#pub-moe26" data-flash>Graph-based mixture-of-experts (ICMI 2026, Best Student Paper)</a></li>
+          </ul>
         </div>
         <div class="step-panel" role="tabpanel" id="panel-4" aria-labelledby="tab-4" hidden>
           <h3>Agents that act on it</h3>
@@ -508,12 +553,13 @@
   const NAMES = ['Not engaged', 'Barely engaged', 'Engaged', 'Highly engaged'];
   const css = getComputedStyle(document.documentElement);
   const v = n => css.getPropertyValue(n).trim();
-  const BAND_FILL = [v('--blush'), v('--butter'), v('--sky'), v('--mint')];  // index = band
-  const LINE = v('--lav');
+  const BAND_FILL = [v('--g0'), v('--g1'), v('--g2'), v('--g3')];  // index = band
+  const LINE = v('--accent');
   const INK = v('--ink');
 
   const STEP = 0.1;            // one stored sample every 0.1 s
   let W = 0, H = 0, N = 200, stepX = 1;
+  const END = 12;              // gap at the right so the live dot is never cut off
   let energy = 0.55, value = 0.55, acc = 0;
   let samples = [];
   let hoverX = null;
@@ -529,7 +575,7 @@
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     N = Math.max(100, Math.round(W / 4));
-    stepX = W / (N - 1);
+    stepX = (W - END) / (N - 1);
     while (samples.length < N) {          // a believable past instead of a flat line
       const k = samples.length;
       samples.unshift(0.55 + 0.14 * Math.sin(k * 0.06) + 0.06 * Math.sin(k * 0.17));
@@ -549,38 +595,47 @@
   window.addEventListener('touchmove', () => bump(0.02), { passive: true });
 
   // x position of history sample i (newest stored sample sits just left of the live point)
-  const xOf = i => W - (N - 1 - i + acc / STEP) * stepX;
+  const xOf = i => (W - END) - (N - 1 - i + acc / STEP) * stepX;
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // pastel bands, matching the labels on the left
+    // grey bands, matching the labels on the left
     for (let b = 0; b < 4; b++) {
-      ctx.globalAlpha = 0.45;
+      ctx.globalAlpha = 0.7;
       ctx.fillStyle = BAND_FILL[b];
       ctx.fillRect(0, y((b + 1) / 4), W, H / 4);
     }
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'rgba(42,45,74,0.07)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)'; ctx.lineWidth = 1;
     [0.25, 0.5, 0.75].forEach(t => { ctx.beginPath(); ctx.moveTo(0, Math.round(y(t)) + .5); ctx.lineTo(W, Math.round(y(t)) + .5); ctx.stroke(); });
+
+    // soft fill under the line
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, 'rgba(22,22,22,0.16)');
+    g.addColorStop(1, 'rgba(22,22,22,0)');
+    ctx.beginPath();
+    samples.forEach((s, i) => { const X = xOf(i); i ? ctx.lineTo(X, y(s)) : ctx.moveTo(X, y(s)); });
+    ctx.lineTo(W - END, y(value)); ctx.lineTo(W, y(value)); ctx.lineTo(W, H); ctx.lineTo(xOf(0), H); ctx.closePath();
+    ctx.fillStyle = g; ctx.fill();
 
     // the line
     ctx.beginPath();
     samples.forEach((s, i) => { const X = xOf(i); i ? ctx.lineTo(X, y(s)) : ctx.moveTo(X, y(s)); });
-    ctx.lineTo(W, y(value));
+    ctx.lineTo(W - END, y(value));
     ctx.strokeStyle = LINE; ctx.lineWidth = 2.75; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
 
     // live head
-    ctx.beginPath(); ctx.arc(W - 7, y(value), 11, 0, Math.PI * 2); ctx.fillStyle = 'rgba(108,99,199,0.18)'; ctx.fill();
-    ctx.beginPath(); ctx.arc(W - 7, y(value), 5.5, 0, Math.PI * 2); ctx.fillStyle = LINE; ctx.fill();
+    ctx.beginPath(); ctx.arc(W - END, y(value), 9, 0, Math.PI * 2); ctx.fillStyle = 'rgba(22,22,22,0.14)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(W - END, y(value), 5, 0, Math.PI * 2); ctx.fillStyle = LINE; ctx.fill();
 
     // hover read-out
     if (hoverX !== null) {
-      const k = Math.max(0, Math.round((W - hoverX) / stepX - acc / STEP));
+      const k = Math.max(0, Math.round((W - END - hoverX) / stepX - acc / STEP));
       const i = Math.max(0, N - 1 - k);
       const val = k === 0 ? value : samples[i];
-      const X = k === 0 ? W - 7 : xOf(i);
-      ctx.strokeStyle = 'rgba(42,45,74,0.35)'; ctx.setLineDash([3, 4]);
+      const X = k === 0 ? W - END : xOf(i);
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.setLineDash([3, 4]);
       ctx.beginPath(); ctx.moveTo(X, 0); ctx.lineTo(X, H); ctx.stroke(); ctx.setLineDash([]);
       ctx.beginPath(); ctx.arc(X, y(val), 6, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
       ctx.lineWidth = 2.5; ctx.strokeStyle = INK; ctx.stroke();
@@ -607,7 +662,7 @@
     const dt = Math.min((now - last) / 1000, 0.1); last = now;
     energy = Math.max(0.04, energy - dt * 0.05);          // slow decay when idle
     value += (energy - value) * Math.min(1, dt * 2.2) + (Math.random() - 0.5) * 0.008;
-    value = Math.min(0.97, Math.max(0.03, value));
+    value = Math.min(0.95, Math.max(0.05, value));
     acc += dt;
     while (acc >= STEP) { acc -= STEP; samples.push(value); if (samples.length > N) samples.shift(); }
     setLevel(value);
