@@ -217,17 +217,16 @@
       <div class="about-grid">
         <div class="prose">
           <p>I am a PhD student at IIT Ropar, where I started in January 2022. My research is on engagement- and affect-aware machine learning: recognising how engaged and attentive someone is from video, voice and conversation, and using those signals inside interactive systems.</p>
-          <p>I work with Dr. Jainendra Shukla at the Human-Machine Interaction Lab, IIIT-Delhi, and collaborate with Dr. Abhinav Dhall (Monash University). From January to June 2027 I will be a visiting researcher at JAIST, Japan, hosted by Prof. Shogo Okada.</p>
+          <p>I work with Dr. Abhinav Dhall (Monash University) at the LASII Lab, IIIT-Delhi.</p>
           <div class="links">
             <!-- TODO: replace each # with your real link -->
-            <a href="#">CV (PDF)</a>
-            <a href="#">Google Scholar</a>
+            <a href="cv.pdf">CV (PDF)</a>
+            <a href="https://scholar.google.com/citations?user=Uu3OWTEAAAAJ&hl=en">Google Scholar</a>
             <a href="#">GitHub</a>
             <a href="#">LinkedIn</a>
           </div>
         </div>
-        <!-- TODO: replace the initials with <img src="photo.jpg" alt="Monisha Singh"> -->
-        <div class="portrait" aria-hidden="true">MS</div>
+        <div class="portrait" aria-hidden="true"><img src="photo.jpg" alt="Monisha Singh"></div>
       </div>
     </div>
   </section>
@@ -268,7 +267,6 @@
     <div class="split">
       <h2>News</h2>
       <dl class="news">
-        <div><dt>Jan 2027</dt><dd>Starting a six-month research visit at JAIST, Japan, with Prof. Shogo Okada.</dd></div>
         <div><dt>Oct 2026</dt><dd>Our paper on graph-based mixture-of-experts won the <strong>Best Student Paper Award</strong> at ACM ICMI 2026 in Naples.</dd></div>
         <div><dt>Sep 2026</dt><dd>EngageNet++ accepted in IEEE Transactions on Affective Computing.</dd></div>
       </dl>
@@ -297,22 +295,27 @@
           </li>
         </ul>
 
-        <p class="year">Under review</p>
+        <!-- <p class="year">Under review</p>
         <ul class="pubs">
           <li>
             <span class="title">Decoding DREAMS: Understanding Engagement and Attention through Video and Language Models</span>
             <span class="authors"><b>Monisha Singh</b>, Gulshan Sharma, Abhinav Dhall</span>
             <span class="venue">Journal submission</span>
           </li>
-        </ul>
+        </ul> -->
 
         <p class="year">Earlier</p>
         <ul class="pubs">
           <li>
-            <!-- TODO: fill in the DREAMS conference paper details -->
-            <span class="title">[DREAMS conference paper title]</span>
-            <span class="authors"><b>Monisha Singh</b>, [co-authors]</span>
-            <span class="venue">International Conference on Pattern Recognition (ICPR), [year]</span>
+            <span class="title">DREAMS: Diverse Reactions of Engagement and Attention Mind States dataset</span>
+            <span class="authors"><b>Monisha Singh</b>, Gulshan Sharma, Ximi Hoque, Abhinav Dhall</span>
+            <span class="venue">International Conference on Pattern Recognition (ICPR), 2024</span>
+            <span class="actions"><a href="#">PDF</a></span>
+          </li>
+          <li>
+            <span class="title">Do I have your attention: A large scale engagement prediction dataset and baselines</span>
+            <span class="authors"><b>Monisha Singh</b>, Ximi Hoque, Donghuo Zeng, Yanan Wang, Kazushi Ikeda, Abhinav Dhall</span>
+            <span class="venue">ACM International Conference on Multimodal Interaction (ICMI), Paris, 2023</span>
             <span class="actions"><a href="#">PDF</a></span>
           </li>
         </ul>
@@ -326,7 +329,7 @@
     <h2>Contact</h2>
     <div>
       <!-- TODO: put your academic email here -->
-      <a class="email" href="mailto:you@iitrpr.ac.in">you@iitrpr.ac.in</a>
+      <a class="email" href="mailto:you@iitrpr.ac.in">monisha.21csz0023@iitrpr.ac.in</a>
       <p class="prose" style="margin-top:1rem">I am happy to talk about engagement, affective computing, multimodal interaction, or collaborations.</p>
     </div>
   </div>
@@ -346,7 +349,7 @@
     { min: 0.25, name: 'Barely engaged' },
     { min: 0.00, name: 'Not engaged' }
   ];
-  const BAND_LABELS = ['Highly', 'Engaged', 'Barely', 'Not'];
+  const BAND_LABELS = ['Highly Engaged', 'Engaged', 'Barely Engaged', 'Not Engaged'];
   const css = getComputedStyle(document.documentElement);
   const SIGNAL = css.getPropertyValue('--signal').trim();
   const RULE = css.getPropertyValue('--rule').trim();
